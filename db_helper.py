@@ -29,7 +29,7 @@ def get_db_cursor(commit=False):
 def fetch_expenses_for_date(expense_date):
     logger.info(f"fetch_expenses_for_date called with {expense_date}")
     with get_db_cursor() as cursor:
-        cursor.execute("SELECT * FROM expenses WHERE expense_date = %s", (expense_date,))
+        cursor.execute("SELECT * FROM expenses WHERE expense_date = %s AND session_id = 'demo'", (expense_date,))
         expenses = cursor.fetchall()
         return expenses
 
@@ -37,7 +37,8 @@ def fetch_expenses_for_date(expense_date):
 def delete_expenses_for_date(expense_date):
     logger.info(f"delete_expenses_for_date called with {expense_date}")
     with get_db_cursor(commit=True) as cursor:
-        cursor.execute("DELETE FROM expenses WHERE expense_date = %s", (expense_date,))
+        cursor.execute("DELETE FROM expenses WHERE expense_date = %s AND session_id = 'demo'", (expense_date,))
+
 
 def delete_all_demo_data():
     logger.info("delete_all_demo_data called")
@@ -66,8 +67,8 @@ def insert_expense(expense_date, amount, category, notes):
     logger.info(f"insert_expense called with date: {expense_date}, amount: {amount}, category: {category}, notes: {notes}")
     with get_db_cursor(commit=True) as cursor:
         cursor.execute(
-            "INSERT INTO expenses (expense_date, amount, category, notes) VALUES (%s, %s, %s, %s)",
-            (expense_date, amount, category, notes)
+            "INSERT INTO expenses (expense_date, amount, category, notes, session_id) VALUES (%s, %s, %s, %s, %s)",
+            (expense_date, amount, category, notes, 'demo')
         )
 
 
@@ -76,7 +77,7 @@ def fetch_expense_summary(start_date, end_date):
     with get_db_cursor() as cursor:
         cursor.execute(
             '''SELECT category, SUM(amount) as total 
-               FROM expenses WHERE expense_date
+               FROM expenses WHERE session_id ='demo' AND expense_date
                BETWEEN %s and %s  
                GROUP BY category;''',
             (start_date, end_date)
@@ -93,7 +94,7 @@ def fetch_monthly_summary(start_date, end_date):
                    category,
                    SUM(amount) as total
             FROM expenses
-            WHERE expense_date BETWEEN %s AND %s
+            WHERE session_id = 'demo' AND expense_date BETWEEN %s AND %s
             GROUP BY month, category
             ORDER BY month;
             ''',
