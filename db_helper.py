@@ -44,26 +44,22 @@ def delete_all_demo_data():
     with get_db_cursor(commit=True) as cursor:
         cursor.execute("DELETE FROM expenses")
 
+
+import os
+
+
 def reset_demo_data():
-    logger.info("reset_demo_data called")
-    demo_entries = [
-        ("2025-01-03", 1200.00, "Rent", "January rent"),
-        ("2025-01-10", 200.00, "Food", "Groceries"),
-        ("2025-02-05", 450.00, "Shopping", "Clothes"),
-        ("2025-03-18", 300.00, "Entertainment", "Movie + Snacks"),
-        ("2025-04-25", 150.00, "Other", "Miscellaneous"),
-        ("2025-05-12", 700.00, "Rent", "May rent"),
-        ("2025-06-30", 250.00, "Food", "Dinner")
-    ]
+    logger.info("reset_demo_data called via SQL file")
+    sql_path = os.path.join(os.path.dirname(__file__), "expense_db_creation.sql")
+
+    with open(sql_path, "r") as f:
+        sql_script = f.read()
 
     with get_db_cursor(commit=True) as cursor:
-        cursor.execute("DELETE FROM expenses")
-        for entry in demo_entries:
-            cursor.execute(
-                "INSERT INTO expenses (expense_date, amount, category, notes) VALUES (%s, %s, %s, %s)",
-                entry
-            )
-
+        for statement in sql_script.split(";"):
+            statement = statement.strip()
+            if statement:
+                cursor.execute(statement)
 
 
 def insert_expense(expense_date, amount, category, notes):
