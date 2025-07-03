@@ -53,6 +53,7 @@ def get_analytics(date_range: DateRange):
         }
 
     return breakdown
+
 @app.get("/")
 def root():
-    return {"message": "✅ Expense Tracker backend is running"}
+    return {"message": " Expense Tracker backend is running"}
