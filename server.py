@@ -22,7 +22,7 @@ def root():
 
 @app.get("/expenses/{expense_date}", response_model=List[Expense])
 def get_expenses(expense_date: date, request: Request):
-    session_id = request.query_params.get("session_id")
+    session_id = request.query_params.get("session_id","demo")
     if not session_id:
         raise HTTPException(status_code=400, detail="session_id query parameter required")
     expenses = db_helper.fetch_expenses_for_date(expense_date, session_id)
@@ -32,7 +32,7 @@ def get_expenses(expense_date: date, request: Request):
 
 @app.post("/expenses/{expense_date}")
 def add_or_update_expense(expense_date: date, expenses: List[Expense], request: Request):
-    session_id = request.query_params.get("session_id")
+    session_id = request.query_params.get("session_id","demo")
     if not session_id:
         raise HTTPException(status_code=400, detail="session_id query parameter required")
     db_helper.delete_expenses_for_date(expense_date, session_id)
