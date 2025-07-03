@@ -8,12 +8,14 @@ logger = setup_logger('db_helper')
 
 @contextmanager
 def get_db_cursor(commit=False):
+    import os
+
     connection = mysql.connector.connect(
-        host="b3wen9nb4kjuzxl3i2nf-mysql.services.clever-cloud.com",
-        user="upldwerensgkqska",
-        password="RjVdn466CvCX0DxiQ1CU",
-        database="b3wen9nb4kjuzxl3i2nf",
-        port=3306
+        host=os.getenv("DB_HOST"),
+        user=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASSWORD"),
+        database=os.getenv("DB_NAME"),
+        port=int(os.getenv("DB_PORT", 3306))
     )
 
     cursor = connection.cursor(dictionary=True)
