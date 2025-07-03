@@ -54,6 +54,25 @@ def get_analytics(date_range: DateRange):
 
     return breakdown
 
+@app.delete("/delete-demo-data")
+def delete_demo_data():
+    try:
+        db_helper.delete_all_demo_data()
+        return {"message": "Demo data deleted successfully."}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error deleting demo data: {str(e)}")
+
+
+@app.post("/reset-demo-data")
+def reset_demo_data():
+    try:
+        db_helper.reset_demo_data()
+        return {"message": "Demo data reset successfully."}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error resetting demo data: {str(e)}")
+
+
 @app.get("/")
 def root():
     return {"message": " Expense Tracker backend is running"}
+
